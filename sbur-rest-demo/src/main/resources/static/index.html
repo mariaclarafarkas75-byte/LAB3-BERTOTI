@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dream Fields</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,500&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ceu: #EAF2F8;
+    --nuvem: #FFFFFF;
+    --periwinkle: #A9C6E8;
+    --azul-noite: #6E93BE;
+    --lilas: #C9B8DE;
+    --tinta: #33455C;
+    --tinta-suave: rgba(51, 69, 92, 0.6);
+    --erro: #C97A7A;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ceu);
+    color: var(--tinta);
+    font-family: 'Quicksand', sans-serif;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  .fundo-flores {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .fundo-flores svg { width: 100%; height: 100%; }
+
+  header, main { position: relative; z-index: 1; }
+
+  header {
+    position: relative;
+    padding: 4rem 1.5rem 3rem;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  header::before,
+  header::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    z-index: 0;
+  }
+
+  header::before {
+    width: 340px;
+    height: 340px;
+    background: var(--periwinkle);
+    opacity: 0.45;
+    top: -140px;
+    left: -60px;
+  }
+
+  header::after {
+    width: 300px;
+    height: 300px;
+    background: var(--lilas);
+    opacity: 0.4;
+    top: -100px;
+    right: -40px;
+  }
+
+  header .eyebrow {
+    position: relative;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--azul-noite);
+    margin-bottom: 0.7rem;
+  }
+
+  header h1 {
+    position: relative;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(2.4rem, 6vw, 3.6rem);
+    margin: 0;
+    letter-spacing: -0.01em;
+    color: var(--tinta);
+  }
+
+  header p {
+    position: relative;
+    color: var(--tinta-suave);
+    margin-top: 0.6rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  form {
+    position: relative;
+    background: var(--nuvem);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    gap: 0.75rem;
+    align-items: end;
+    margin-bottom: 2.5rem;
+    box-shadow: 0 12px 30px -18px rgba(110, 147, 190, 0.5);
+  }
+
+  .campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .campo label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    color: var(--tinta-suave);
+  }
+
+  input {
+    background: var(--ceu);
+    border: 1px solid rgba(110, 147, 190, 0.25);
+    border-radius: 9px;
+    padding: 0.6rem 0.7rem;
+    color: var(--tinta);
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+
+  input:focus {
+    outline: 2px solid var(--azul-noite);
+    outline-offset: 1px;
+    border-color: transparent;
+  }
+
+  input::placeholder { color: rgba(51, 69, 92, 0.35); }
+
+  button {
+    cursor: pointer;
+    border: none;
+    border-radius: 9px;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    transition: transform 0.12s ease, background 0.12s ease;
+  }
+
+  button:focus-visible { outline: 2px solid var(--azul-noite); outline-offset: 2px; }
+
+  .btn-add {
+    background: var(--periwinkle);
+    color: var(--tinta);
+    padding: 0.65rem 1.3rem;
+    height: fit-content;
+  }
+
+  .btn-add:hover { transform: translateY(-1px); background: var(--azul-noite); color: var(--nuvem); }
+
+  #erro-form {
+    grid-column: 1 / -1;
+    color: var(--erro);
+    font-size: 0.82rem;
+    display: none;
+  }
+
+  .grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .card {
+    background: var(--nuvem);
+    color: var(--tinta);
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    position: relative;
+    box-shadow: 0 10px 24px -16px rgba(110, 147, 190, 0.55);
+  }
+
+  .card .faixa {
+    width: 8px;
+    flex-shrink: 0;
+  }
+
+  .card .conteudo {
+    padding: 1.1rem 1.1rem 1rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .card h3 {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.25rem;
+    margin: 0;
+  }
+
+  .card .cor {
+    font-size: 0.75rem;
+    color: var(--tinta-suave);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+  }
+
+  .card .linha {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-top: 0.3rem;
+  }
+
+  .card .preco {
+    font-weight: 700;
+    color: var(--azul-noite);
+  }
+
+  .card .estoque {
+    font-size: 0.78rem;
+    color: var(--tinta-suave);
+  }
+
+  .card .remover {
+    align-self: flex-end;
+    background: none;
+    color: rgba(51, 69, 92, 0.4);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0;
+    margin-top: 0.2rem;
+  }
+
+  .card .remover:hover { color: var(--erro); }
+
+  .vazio {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--tinta-suave);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  @media (max-width: 720px) {
+    form { grid-template-columns: 1fr 1fr; }
+    .btn-add { grid-column: 1 / -1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="fundo-flores" aria-hidden="true">
+  <svg viewBox="0 0 1440 1600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="tulipa" viewBox="0 0 60 100">
+      <path d="M30 40 C10 40 8 15 20 5 C24 12 27 15 30 15 C33 15 36 12 40 5 C52 15 50 40 30 40 Z" fill="currentColor"/>
+      <line x1="30" y1="40" x2="30" y2="92" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+      <path d="M30 62 C42 62 48 70 48 79 C36 79 30 73 30 62 Z" fill="currentColor"/>
+      <path d="M30 72 C19 72 14 79 14 87 C25 87 30 81 30 72 Z" fill="currentColor"/>
+    </symbol>
+
+    <use href="#tulipa" x="60" y="90" width="70" height="120" style="color: var(--periwinkle); opacity: 0.35;"/>
+    <use href="#tulipa" x="1240" y="60" width="90" height="150" style="color: var(--lilas); opacity: 0.3;"/>
+    <use href="#tulipa" x="150" y="520" width="60" height="100" style="color: var(--periwinkle); opacity: 0.25;"/>
+    <use href="#tulipa" x="1320" y="480" width="75" height="125" style="color: var(--azul-noite); opacity: 0.18;"/>
+    <use href="#tulipa" x="40" y="980" width="85" height="140" style="color: var(--lilas); opacity: 0.28;"/>
+    <use href="#tulipa" x="1260" y="960" width="65" height="108" style="color: var(--periwinkle); opacity: 0.3;"/>
+    <use href="#tulipa" x="680" y="1380" width="70" height="115" style="color: var(--azul-noite); opacity: 0.15;"/>
+    <use href="#tulipa" x="200" y="1420" width="55" height="92" style="color: var(--lilas); opacity: 0.22;"/>
+    <use href="#tulipa" x="1180" y="1400" width="80" height="132" style="color: var(--periwinkle); opacity: 0.22;"/>
+  </svg>
+</div>
+
+<header>
+  <div class="eyebrow">Catálogo</div>
+  <h1>Dream Fields</h1>
+  <p>Cadastre e acompanhe o estoque de flores da loja</p>
+</header>
+
+<main>
+  <form id="form-flor">
+    <div class="campo">
+      <label for="nome">Nome</label>
+      <input id="nome" placeholder="Ex: Rosa" required>
+    </div>
+    <div class="campo">
+      <label for="cor">Cor</label>
+      <input id="cor" placeholder="Ex: Vermelha">
+    </div>
+    <div class="campo">
+      <label for="preco">Preço (R$)</label>
+      <input id="preco" type="number" step="0.01" min="0" placeholder="0,00" required>
+    </div>
+    <div class="campo">
+      <label for="estoque">Estoque</label>
+      <input id="estoque" type="number" min="0" placeholder="0" required>
+    </div>
+    <button type="submit" class="btn-add">Adicionar</button>
+    <div id="erro-form"></div>
+  </form>
+
+  <div id="grade" class="grade"></div>
+</main>
+
+<script>
+  const API = 'http://localhost:8080/flores';
+  const grade = document.getElementById('grade');
+  const form = document.getElementById('form-flor');
+  const erroForm = document.getElementById('erro-form');
+
+  function corParaFaixa(cor) {
+    const mapa = {
+      vermelha: '#E3A8AE', vermelho: '#E3A8AE',
+      amarela: '#EAD9A3', amarelo: '#EAD9A3',
+      branca: '#DCE6EE', branco: '#DCE6EE',
+      rosa: '#E5C4D6',
+      roxa: '#C9B8DE', roxo: '#C9B8DE',
+      laranja: '#EBC3A4',
+      azul: '#A9C6E8'
+    };
+    const chave = (cor || '').trim().toLowerCase();
+    return mapa[chave] || '#B8CCE0';
+  }
+
+  async function carregarFlores() {
+    grade.innerHTML = '<p class="vazio">Carregando...</p>';
+    try {
+      const resp = await fetch(API);
+      if (!resp.ok) throw new Error('Falha ao buscar flores');
+      const flores = await resp.json();
+      renderizar(flores);
+    } catch (e) {
+      grade.innerHTML = `<p class="vazio">Não foi possível carregar as flores. Verifique se a API está rodando em localhost:8080.</p>`;
+    }
+  }
+
+  function renderizar(flores) {
+    if (!flores.length) {
+      grade.innerHTML = '<p class="vazio">Nenhuma flor cadastrada ainda. Adicione a primeira acima.</p>';
+      return;
+    }
+
+    grade.innerHTML = '';
+    flores.forEach(flor => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="faixa" style="background:${corParaFaixa(flor.cor)}"></div>
+        <div class="conteudo">
+          <h3>${escapeHtml(flor.nome)}</h3>
+          <div class="cor">${escapeHtml(flor.cor || 'Sem cor definida')}</div>
+          <div class="linha">
+            <span class="preco">R$ ${Number(flor.preco).toFixed(2).replace('.', ',')}</span>
+            <span class="estoque">${flor.estoque} un.</span>
+          </div>
+          <button class="remover" data-id="${flor.id}">Remover</button>
+        </div>
+      `;
+      grade.appendChild(card);
+    });
+
+    document.querySelectorAll('.remover').forEach(btn => {
+      btn.addEventListener('click', () => removerFlor(btn.dataset.id));
+    });
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str ?? '';
+    return div.innerHTML;
+  }
+
+  async function removerFlor(id) {
+    try {
+      await fetch(`${API}/${id}`, { method: 'DELETE' });
+      carregarFlores();
+    } catch (e) {
+      alert('Não foi possível remover a flor.');
+    }
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    erroForm.style.display = 'none';
+
+    const nome = document.getElementById('nome').value.trim();
+    const cor = document.getElementById('cor').value.trim();
+    const preco = document.getElementById('preco').value;
+    const estoque = document.getElementById('estoque').value;
+
+    try {
+      const resp = await fetch(API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, cor, preco: Number(preco), estoque: Number(estoque) })
+      });
+
+      if (!resp.ok) throw new Error('Erro ao salvar');
+
+      form.reset();
+      carregarFlores();
+    } catch (e) {
+      erroForm.textContent = 'Não foi possível adicionar a flor. Confira os campos e tente novamente.';
+      erroForm.style.display = 'block';
+    }
+  });
+
+  carregarFlores();
+</script>
+
+</body>
+</html>
